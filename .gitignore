@@ -1,0 +1,14 @@
+
+*.vsidx
+
+MarketPlaceService/.vs/MarketPlaceService/v17/
+
+*.bin
+
+*.v2
+
+*.cache
+
+*.dll
+
+MarketPlaceService/MarketPlaceService/obj/Debug/net8.0/
