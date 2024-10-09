@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import LoginPage from '../app/login/page'; // Adjust the import path as needed
+import LoginPage from '../app/login/page'; 
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../app/context/AuthContext';
@@ -67,7 +67,6 @@ describe('LoginPage', () => {
     // Check if the logIn function is called
     expect(mockLogIn).toHaveBeenCalled();
 
-    // Check if the user is redirected
     expect(mockRouter.push).toHaveBeenCalledWith('/');
   });
 

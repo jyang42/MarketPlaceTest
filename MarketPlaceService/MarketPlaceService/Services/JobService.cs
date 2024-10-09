@@ -183,8 +183,12 @@ namespace MarketPlaceService.Services
             {
                 var j = await this._dbContext.Jobs.Where(x => x.Id == jobId).FirstOrDefaultAsync();
                 
-                
                 var poster = this._userManager.Users.Where(x => x.Id == j.PosterId).FirstOrDefault();
+
+                if(poster == null)
+                {
+                    throw new Exception("job poster cannot be null");
+                }
 
                 var bids = this._dbContext.Bids.Where(x => x.JobId == jobId).ToList();
 
@@ -194,6 +198,10 @@ namespace MarketPlaceService.Services
                 foreach (var b in bids)
                 {
                     var bidder = this._userManager.Users.Where(x => x.Id == b.BidUserId).FirstOrDefault();
+                    if(bidder == null)
+                    {
+                        throw new Exception("bidder cannot be null");
+                    }
                     var dto = new BidDTO()
                     {
                         Id = b.Id,
