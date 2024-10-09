@@ -1,16 +1,23 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 import {user_login} from '../../utils/api';
 
 const LoginPage: React.FC = () => {
-    localStorage.clear();
+    
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const router = useRouter();
-    const { logIn } = useAuth();
+    const { logIn, isLoggedIn } = useAuth();
+
+    useEffect(() => {
+        if(isLoggedIn){
+            router.push('/')
+        }
+    }, [isLoggedIn]);
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
