@@ -141,7 +141,7 @@ namespace MarketPlaceService.Services
 
                 results.Add(dto);
             }
-            
+            results = results.OrderByDescending(x => x.NumberOfBids).ToList();
             return results;
         }
 

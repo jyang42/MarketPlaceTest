@@ -10,6 +10,8 @@ using MarketPlaceService.Services.Models;
 using MarketPlaceService.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace MarketPlaceService.Tests
 {
@@ -21,18 +23,36 @@ namespace MarketPlaceService.Tests
 
         public JobServiceTests()
         {
-            // Configure DbContext with In-Memory Database
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(databaseName: "JobTestDb")
-                .Options;
+         .UseInMemoryDatabase(databaseName: "JobTestDb")
+         .Options;
 
             _dbContext = new ApplicationDbContext(options);
             _dbContext.Database.EnsureCreated(); // Ensure database schema is created
 
-            // Mock UserManager
+            // Mocking the required services for UserManager
             var userStoreMock = new Mock<IUserStore<User>>();
+            var optionsMock = new Mock<IOptions<IdentityOptions>>();
+            var passwordHasherMock = new Mock<IPasswordHasher<User>>();
+            var userValidators = new List<IUserValidator<User>> { new Mock<IUserValidator<User>>().Object };
+            var passwordValidators = new List<IPasswordValidator<User>> { new Mock<IPasswordValidator<User>>().Object };
+            var lookupNormalizerMock = new Mock<ILookupNormalizer>();
+            var identityErrorDescriberMock = new Mock<IdentityErrorDescriber>();
+            var servicesMock = new Mock<IServiceProvider>();
+            var loggerMock = new Mock<ILogger<UserManager<User>>>();
+
+            // Properly mock UserManager with all required dependencies
             _userManagerMock = new Mock<UserManager<User>>(
-                userStoreMock.Object);
+                userStoreMock.Object,
+                optionsMock.Object,
+                passwordHasherMock.Object,
+                userValidators,
+                passwordValidators,
+                lookupNormalizerMock.Object,
+                identityErrorDescriberMock.Object,
+                servicesMock.Object,
+                loggerMock.Object
+            );
 
             // Initialize JobService with the mocked UserManager and real DbContext
             _jobService = new JobService(_dbContext, _userManagerMock.Object);
@@ -89,4 +109,5 @@ namespace MarketPlaceService.Tests
             var exception = await Assert.ThrowsAsync<Exception>(async () => await _jobService.CreateJob(createJobDTO));
             Assert.Equal("User cannot be null", exception.Message);
         }
+    }
 }
